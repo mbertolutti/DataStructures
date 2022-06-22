@@ -3,6 +3,7 @@
 #include <fmt/core.h>
 #include <iostream>
 #include <string>
+#include <random>
 
 struct node
 {
@@ -34,6 +35,16 @@ void insert(node*& root, int value)
     }
 }
 
+void random(node*& root, unsigned count)
+{
+    std::mt19937 gen32;
+    for (size_t i = 0; i < count; ++i)
+    {
+        fmt::print("{}", "start at root\n");
+        insert(root, gen32() % 100);
+        fmt::print("{}", "\n");
+    }
+}
 
 void command_loop(node*& root)
 {
@@ -42,6 +53,7 @@ void command_loop(node*& root)
     {
         fmt::print("{}{}", "COMMANDS", "\n");
         fmt::print("{}{}", "\tadd [value]\t inserts value into bst", "\n");
+        fmt::print("{}{}", "\trdm [count]\t inserts count random values into bst", "\n");
         fmt::print("{}{}", "\tquit\t\t quit program", "\n\n");
         fmt::print("{}", "Command> ");
 
@@ -56,6 +68,12 @@ void command_loop(node*& root)
             fmt::print("{}", "start at root\n");
             insert(root, value);
             fmt::print("{}", "\n");
+        }
+        if (input == "rdm")
+        {
+            unsigned count;
+            std::cin >> count;
+            random(root, count);
         }
         else if (input == "quit")
         {
