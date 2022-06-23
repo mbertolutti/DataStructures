@@ -6,6 +6,8 @@
 #include <random>
 #include <stack>
 #include <utility>
+#include <vector>
+#include <algorithm>
 
 struct node
 {
@@ -64,7 +66,7 @@ void height(node*& root)
             todo_stack.push(std::make_pair(current_node->left, current_height + 1));
             if (current_height + 1 > tree_height)
             {
-                tree_height = current_height;
+                tree_height = current_height + 1;
             }
         }
         if (current_node->right)
@@ -72,11 +74,53 @@ void height(node*& root)
             todo_stack.push(std::make_pair(current_node->right, current_height + 1));
             if (current_height + 1 > tree_height)
             {
-                tree_height = current_height;
+                tree_height = current_height + 1;
             }
         }
     }
     fmt::print("{}{}{}", "bst height is ", tree_height, "\n\n");
+}
+
+void balanced_helper(node*& root, int depth, std::vector<int>& leafes)
+{
+    if (root->left)
+    {
+        balanced_helper(root->left, depth + 1, leafes);
+    }
+    else
+    {
+        leafes.push_back(depth);
+    }
+    if (root->right)
+    {
+        balanced_helper(root->right, depth + 1, leafes);
+    }
+    else
+    {
+        leafes.push_back(depth);
+    }
+}
+
+// height of the left and right subtree of any node differ by not more than 1
+void balanced(node*& root)
+{
+    unsigned balanced = true;
+    std::vector<int> leafes = {};
+    
+    balanced_helper(root, 1, leafes);
+
+    fmt::print("{}", "leafes depth ");
+    fmt::print("{}{}", leafes[0], " ");
+    for (size_t i = 1; i < leafes.size(); ++i)
+    {
+        fmt::print("{}{}", leafes[i], " ");
+        if (abs(leafes[i - 1] - leafes[i]) > 1)
+        {
+            balanced = false;
+        }
+    }
+    fmt::print("{}", "\n");
+    fmt::print("{}{}{}{}", "bst ", (balanced ? "is " : "is not "), "balanced", "\n\n");
 }
 
 void command_loop(node*& root)
@@ -88,6 +132,7 @@ void command_loop(node*& root)
         fmt::print("{}{}", "\tadd [value]\t inserts value into bst", "\n");
         fmt::print("{}{}", "\trdm [count]\t inserts count random values into bst", "\n");
         fmt::print("{}{}", "\theight\t\t returns bst height", "\n");
+        fmt::print("{}{}", "\tbalanced\t returns whether the bst is balanced or not", "\n");
         fmt::print("{}{}", "\tquit\t\t quit program", "\n\n");
         fmt::print("{}", "Command> ");
 
@@ -112,6 +157,10 @@ void command_loop(node*& root)
         else if (input == "height")
         {
             height(root);
+        }
+        else if (input == "balanced")
+        {
+            balanced(root);
         }
         else if (input == "quit")
         {
