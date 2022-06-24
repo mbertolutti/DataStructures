@@ -7,7 +7,6 @@
 #include <stack>
 #include <utility>
 #include <vector>
-#include <algorithm>
 
 struct node
 {
@@ -54,7 +53,7 @@ void height(node*& root)
 {
     unsigned tree_height = 0;
     std::stack<std::pair<node*, unsigned>> todo_stack;
-    todo_stack.push(std::make_pair(root, 1));
+    todo_stack.push(std::make_pair(root, 0));
     while (!todo_stack.empty())
     {
         std::pair<node*, unsigned> current_todo = todo_stack.top();
@@ -107,7 +106,7 @@ void balanced(node*& root)
     unsigned balanced = true;
     std::vector<int> leafes = {};
     
-    balanced_helper(root, 1, leafes);
+    balanced_helper(root, 0, leafes);
 
     fmt::print("{}", "leafes depth ");
     fmt::print("{}{}", leafes[0], " ");
