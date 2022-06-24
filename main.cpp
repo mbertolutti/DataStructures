@@ -15,7 +15,7 @@ struct node
     node* right = nullptr;
 };
 
-void insert(node*& root, int value)
+void insert_helper(node*& root, int value)
 {
     if (!root)
     {
@@ -23,19 +23,26 @@ void insert(node*& root, int value)
         new_node->value = value;
         root = new_node;
 
-        fmt::print("{}{}{}", "insert value ", value, "\n");
+        fmt::print("{}{}{}", "insert value ", value, ".\n");
         return;
     }
     else if (root->value > value)
     {
-        fmt::print("{}", "traverse left\n");
-        insert(root->left, value);
+        fmt::print("{}", "traverse left,\n");
+        insert_helper(root->left, value);
     }
     else
     {
-        fmt::print("{}", "traverse right\n");
-        insert(root->right, value);
+        fmt::print("{}", "traverse right,\n");
+        insert_helper(root->right, value);
     }
+}
+
+void insert(node*& root, unsigned value)
+{
+    fmt::print("{}", "Start at root,\n");
+    insert_helper(root, value);
+    fmt::print("{}", "\n");
 }
 
 void random(node*& root, unsigned count)
@@ -43,9 +50,7 @@ void random(node*& root, unsigned count)
     std::mt19937 gen32;
     for (size_t i = 0; i < count; ++i)
     {
-        fmt::print("{}", "start at root\n");
         insert(root, gen32() % 100);
-        fmt::print("{}", "\n");
     }
 }
 
@@ -53,7 +58,10 @@ void height(node*& root)
 {
     unsigned tree_height = 0;
     std::stack<std::pair<node*, unsigned>> todo_stack;
-    todo_stack.push(std::make_pair(root, 0));
+    if (root)
+    {
+        todo_stack.push(std::make_pair(root, 0));
+    }
     while (!todo_stack.empty())
     {
         std::pair<node*, unsigned> current_todo = todo_stack.top();
@@ -77,7 +85,7 @@ void height(node*& root)
             }
         }
     }
-    fmt::print("{}{}{}", "bst height is ", tree_height, "\n\n");
+    fmt::print("{}{}{}", "Bst height is ", tree_height, ".\n\n");
 }
 
 void balanced_helper(node*& root, int depth, std::vector<int>& leafes)
@@ -106,82 +114,110 @@ void balanced(node*& root)
     unsigned balanced = true;
     std::vector<int> leafes = {};
     
-    balanced_helper(root, 0, leafes);
-
-    fmt::print("{}", "leafes depth ");
-    fmt::print("{}{}", leafes[0], " ");
-    for (size_t i = 1; i < leafes.size(); ++i)
+    if (root)
     {
-        fmt::print("{}{}", leafes[i], " ");
-        if (abs(leafes[i - 1] - leafes[i]) > 1)
+        balanced_helper(root, 0, leafes);
+
+        fmt::print("{}", "Leafes depth: ");
+        fmt::print("{}{}", leafes[0], " ");
+        for (size_t i = 1; i < leafes.size(); ++i)
         {
-            balanced = false;
+            fmt::print("{}{}", leafes[i], " ");
+            if (abs(leafes[i - 1] - leafes[i]) > 1)
+            {
+                balanced = false;
+            }
         }
+        fmt::print("{}", "\n");
     }
-    fmt::print("{}", "\n");
-    fmt::print("{}{}{}{}", "bst ", (balanced ? "is " : "is not "), "balanced", "\n\n");
+    fmt::print("{}{}{}", "bst ", (balanced ? "is " : "is not "), "balanced.\n\n");
 }
 
 void command_loop(node*& root)
 {
     bool running = true;
+    bool print_commands = 1;
     while (running)
     {
-        fmt::print("{}{}", "COMMANDS", "\n");
-        fmt::print("{}{}", "\tadd [value]\t inserts value into bst", "\n");
-        fmt::print("{}{}", "\trdm [count]\t inserts count random values into bst", "\n");
-        fmt::print("{}{}", "\theight\t\t returns bst height", "\n");
-        fmt::print("{}{}", "\tbalanced\t returns whether the bst is balanced or not", "\n");
-        fmt::print("{}{}", "\tquit\t\t quit program", "\n\n");
-        fmt::print("{}", "Command> ");
+        if (print_commands)
+        {
+            fmt::print("{}", "COMMANDS\n");
+            fmt::print("{}", "\t[a | add] [value]\t Inserts value into bst.\n");
+            fmt::print("{}", "\t[r | rdm] [count]\t inserts count random values into bst.\n");
+            fmt::print("{}", "\t[h | height]\t\t Returns bst height.\n");
+            fmt::print("{}", "\t[b | balanced]\t\t Returns whether the bst is balanced or not.\n");
+            fmt::print("{}", "\t[q | quit]\t\t Quit program.\n\n");
+            fmt::print("{}", "Command> ");
+        }
 
         std::string input;
         std::cin >> input;
-        fmt::print("{}", "\n");
 
-        if (input == "add")
+        if (print_commands)
+        {
+            fmt::print("{}", "\n");
+        }
+        print_commands = 1;
+
+        if (input == "a" || input == "add")
         {
             int value;
+            fmt::print("{}", "Enter add argument [value] > ");
             std::cin >> value;
             if(std::cin.fail())
             {
                 std::cin.clear();
                 std::cin.ignore();
-                std::cout << "invalid input\n\n";
+                fmt::print("{}", "\n");
+                std::cout << "Invalid input.\n\n";
+                print_commands = 0;
             }
             else
             {
-                fmt::print("{}", "start at root\n");
-                insert(root, value);
                 fmt::print("{}", "\n");
+                fmt::print("{}{}{}", "Inserting value ", value, " into the bst:\n");
+                fmt::print("{}", "\n");
+                insert(root, value);
             }
         }
-        else if (input == "rdm")
+        else if (input == "r" || input == "rdm")
         {
             unsigned count;
+            fmt::print("{}", "Enter rdm argument [count] > ");
             std::cin >> count;
             if(std::cin.fail())
             {
                 std::cin.clear();
                 std::cin.ignore();
-                std::cout << "invalid input\n\n";
+                fmt::print("{}", "\n");
+                std::cout << "Invalid input.\n\n";
+                print_commands = 0;
             }
             else
             {
+                fmt::print("{}", "\n");
+                fmt::print("{}{}{}", "Inserting ", count, " random values into the bst:\n");
+                fmt::print("{}", "\n");
                 random(root, count);
             }
         }
-        else if (input == "height")
+        else if (input == "h" || input == "height")
         {
             height(root);
         }
-        else if (input == "balanced")
+        else if (input == "b" || input == "balanced")
         {
             balanced(root);
         }
-        else if (input == "quit")
+        else if (input == "q" || input == "quit")
         {
             running = false;
+        }
+        else
+        {
+            std::cin.clear();
+            std::cin.ignore();
+            std::cout << "Invalid input.\n\n";
         }
     }
 }
