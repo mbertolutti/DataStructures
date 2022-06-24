@@ -143,15 +143,33 @@ void command_loop(node*& root)
         {
             int value;
             std::cin >> value;
-            fmt::print("{}", "start at root\n");
-            insert(root, value);
-            fmt::print("{}", "\n");
+            if(std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore();
+                std::cout << "invalid input\n\n";
+            }
+            else
+            {
+                fmt::print("{}", "start at root\n");
+                insert(root, value);
+                fmt::print("{}", "\n");
+            }
         }
         else if (input == "rdm")
         {
             unsigned count;
             std::cin >> count;
-            random(root, count);
+            if(std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore();
+                std::cout << "invalid input\n\n";
+            }
+            else
+            {
+                random(root, count);
+            }
         }
         else if (input == "height")
         {
