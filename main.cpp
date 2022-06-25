@@ -1,6 +1,7 @@
 // bst_interactive
 
 #include <fmt/core.h>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <random>
@@ -10,12 +11,12 @@
 
 struct node
 {
-    int value = 0;
+    std::uint16_t value = 0;
     node* left = nullptr;
     node* right = nullptr;
 };
 
-void insert_helper(node*& root, int value)
+void insert_helper(node*& root, std::uint16_t value)
 {
     if (!root)
     {
@@ -38,16 +39,16 @@ void insert_helper(node*& root, int value)
     }
 }
 
-void insert(node*& root, unsigned value)
+void insert(node*& root, std::uint16_t value)
 {
     fmt::print("{}", "Start at root,\n");
     insert_helper(root, value);
     fmt::print("{}", "\n");
 }
 
-void random(node*& root, unsigned count)
+void random(node*& root, std::uint16_t count)
 {
-    std::mt19937 gen32;
+    std::mt19937 gen32 = std::mt19937(time(nullptr));
     for (size_t i = 0; i < count; ++i)
     {
         insert(root, gen32() % 100);
@@ -56,18 +57,18 @@ void random(node*& root, unsigned count)
 
 void height(node*& root)
 {
-    unsigned tree_height = 0;
-    std::stack<std::pair<node*, unsigned>> todo_stack;
+    std::uint16_t tree_height = 0;
+    std::stack<std::pair<node*, std::uint16_t>> todo_stack;
     if (root)
     {
         todo_stack.push(std::make_pair(root, 0));
     }
-    while (todo_stack.empty())
+    while (!todo_stack.empty())
     {
-        std::pair<node*, unsigned> current_todo = todo_stack.top();
+        std::pair<node*, std::uint16_t> current_todo = todo_stack.top();
         todo_stack.pop();
         node* current_node = current_todo.first;
-        unsigned current_height = current_todo.second;
+        std::uint16_t current_height = current_todo.second;
         if (current_node->left)
         {
             todo_stack.push(std::make_pair(current_node->left, current_height + 1));
@@ -88,11 +89,11 @@ void height(node*& root)
     fmt::print("{}{}{}", "tree height is ", tree_height, ".\n\n");
 }
 
-void balanced_helper(node*& root, int depth, std::vector<int>& leafes)
+void leafes_helper(node*& root, int depth, std::vector<int>& leafes)
 {
     if (root->left)
     {
-        balanced_helper(root->left, depth + 1, leafes);
+        leafes_helper(root->left, depth + 1, leafes);
     }
     else
     {
@@ -100,7 +101,7 @@ void balanced_helper(node*& root, int depth, std::vector<int>& leafes)
     }
     if (root->right)
     {
-        balanced_helper(root->right, depth + 1, leafes);
+        leafes_helper(root->right, depth + 1, leafes);
     }
     else
     {
@@ -111,32 +112,24 @@ void balanced_helper(node*& root, int depth, std::vector<int>& leafes)
 // height of the left and right subtree of any node differ by not more than 1
 void balanced(node*& root)
 {
-    unsigned balanced = true;
+    std::uint16_t balanced = true;
     std::vector<int> leafes = {};
     
     if (root)
     {
-        balanced_helper(root, 0, leafes);
+        leafes_helper(root, 0, leafes);
 
-        fmt::print("{}", "Leafes depth: ");
-        fmt::print("{}{}", leafes[0], " ");
         for (size_t i = 1; i < leafes.size(); ++i)
         {
-            fmt::print("{}{}", leafes[i], " ");
             if (abs(leafes[i - 1] - leafes[i]) > 1)
             {
                 balanced = false;
+                break;
             }
         }
         fmt::print("{}", "\n");
     }
     fmt::print("{}{}{}", "tree ", (balanced ? "is " : "is not "), "balanced.\n\n");
-}
-
-void print_bfs(node*& root)
-{
-    // TODO
-    fmt::print("{}", "Stub. Come back later.\n\n");
 }
 
 void print_preorder(node*& root)
@@ -172,67 +165,73 @@ void print_postorder(node*& root)
     fmt::print("{}{}", root->value, " ");
 }
 
-void print_dfs(node*& root)
+void print_leafes_depth(node*& root)
 {
-    // TODO
-    fmt::print("{}", "Stub. Come back later.\n\n");
+    std::vector<int> leafes = {};
+    
+    if (root)
+    {
+        leafes_helper(root, 0, leafes);
+
+        fmt::print("{}", "Depth: ");
+        for (size_t i = 0; i < leafes.size(); ++i)
+        {
+            fmt::print("{}{}", leafes[i], " ");
+        }
+    }
+    else
+    {
+        fmt::print("{}", "Tree is empty.");
+    }
 }
 
-void print_leafes(node*& root)
+void print_command_list()
 {
-    // TODO
-    fmt::print("{}", "Stub. Come back later.\n\n");
+    fmt::print("{}", "COMMANDS\n");
+    fmt::print("{}", "\t[a | add] [<value>]\t Insert <value> into tree.\n");
+    fmt::print("{}", "\t[r | rdm] [<count>]\t Insert <count> random values into tree.\n");
+    fmt::print("{}", "\t[d | del] < >\t\t Delete last node. (deterministic breadth first search)\n");
+    fmt::print("{}", "\t[i | deli] < >\t\t Delete position (deterministic breadth first search) ...\n");
+    fmt::print("{}", "\t\t  [r]\t\t ... root node.\n");
+    fmt::print("{}", "\t\t  [<i>]\t\t ... <i>th node.\n");
+    fmt::print("{}", "\t\t  [p | purge]\t ... all nodes.\n");
+
+    fmt::print("{}", "\t[b | bal]\t\t Tree balanced?\n");
+    fmt::print("{}", "\t[f | perf]\t\t Tree perfect?\n");
+    fmt::print("{}", "\t[h | height]\t\t Tree height.\n");
+    fmt::print("{}", "\t[l | leafes]\t\t Print leafes and single parents missing children depth.\n");
+    fmt::print("{}", "\t[g | graph]\t\t Print graphicly visualized tree.\n");
+
+    fmt::print("{}", "\t[p | print] < >\t\t Print tree in ...\n");
+    fmt::print("{}", "\t\t  [pre]\t\t ... preorder traversal mode.\n");
+    fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.\n");
+    fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode.\n");
+
+    fmt::print("{}", "\t[c | com]\t\t Print command list.\n");
+    fmt::print("{}", "\t[q | quit]\t\t Quit program.\n\n");
 }
 
 void command_loop(node*& root)
 {
+    fmt::print("{}", "Welcome to interactive binary search tree builder v1.3c.\n\n");
+    fmt::print("{}", "Enter 'c' or 'com' for a list of all commands.\n\n");
     bool running = true;
-    bool print_commands = 1;
+    bool print_command_line = 0;
+    fmt::print("{}", "Command> ");
     while (running)
     {
-        if (print_commands)
+        if (print_command_line)
         {
-            fmt::print("{}", "COMMANDS\n");
-            fmt::print("{}", "\t[a | add] [<value>]\t Insert <value> into tree.\n");
-            fmt::print("{}", "\t[r | rdm] [<count>]\t Insert <count> random values into tree.\n");
-            fmt::print("{}", "\t[d | del] < >\t\t Delete last node. (breadth first search)\n");
-            fmt::print("{}", "\t[i | deli] < >\t\t Delete position (breadth first search) ...\n");
-            fmt::print("{}", "\t\t  [r]\t\t ... root node.\n");
-            fmt::print("{}", "\t\t  [l]\t\t ... last node.\n");
-            fmt::print("{}", "\t\t  [<i>]\t\t ... <i>th node.\n");
-            fmt::print("{}", "\t\t  [p | purge]\t ... all nodes.\n");
-
-            fmt::print("{}", "\t[b | bal]\t\t Tree balanced?\n");
-            fmt::print("{}", "\t[f | perf]\t\t Tree perfect?\n");
-            fmt::print("{}", "\t[h | height]\t\t Tree height.\n");
-
-            fmt::print("{}", "\t[p | print] < >\t\t Print tree in ...\n");
-            fmt::print("{}", "\t\t  [bfs]\t\t ... breadth first search traversal mode.\n");
-            fmt::print("{}", "\t\t  [d | depth]\t ... depth first search traversal mode.\n");
-            fmt::print("{}", "\t\t  [pre]\t\t ... preorder traversal mode.\n");
-            fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.\n");
-            fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode.\n");
-            fmt::print("{}", "\t\t  [dfs]\t\t ... depth first search traversal mode.\n");
-            fmt::print("{}", "\t\t  [l | leafes]\t ... leafes depth only mode.\n");
-
-            fmt::print("{}", "\t[g | graph]\t\t Print graphicly visualized tree.\n");
-
-            fmt::print("{}", "\t[q | quit]\t\t Quit program.\n\n");
             fmt::print("{}", "Command> ");
         }
+        print_command_line = 1;
 
         std::string input;
         std::cin >> input;
 
-        if (print_commands)
-        {
-            fmt::print("{}", "\n");
-        }
-        print_commands = 1;
-
         if (input == "a" || input == "add")
         {
-            int value;
+            std::uint16_t value;
             fmt::print("{}", "Enter add argument [value] > ");
             std::cin >> value;
             if(std::cin.fail())
@@ -241,7 +240,7 @@ void command_loop(node*& root)
                 std::cin.ignore();
                 fmt::print("{}", "\n");
                 std::cout << "Invalid input.\n\n";
-                print_commands = 0;
+                print_command_line = 0;
             }
             else
             {
@@ -254,7 +253,7 @@ void command_loop(node*& root)
 
         else if (input == "r" || input == "rdm")
         {
-            unsigned count;
+            std::uint16_t count;
             fmt::print("{}", "Enter rdm argument [count] > ");
             std::cin >> count;
             if(std::cin.fail())
@@ -263,7 +262,7 @@ void command_loop(node*& root)
                 std::cin.ignore();
                 fmt::print("{}", "\n");
                 std::cout << "Invalid input.\n\n";
-                print_commands = 0;
+                print_command_line = 0;
             }
             else
             {
@@ -305,7 +304,7 @@ void command_loop(node*& root)
         else if (input == "p" || input == "print")
         {
             std::string print_mode;
-            fmt::print("{}", "Enter print mode [bfs, d, pre, in, post, dfs, l] > ");
+            fmt::print("{}", "Enter print mode [pre, in, post] > ");
             std::cin >> print_mode;
             if (std::cin.fail())
             {
@@ -313,25 +312,23 @@ void command_loop(node*& root)
                 std::cin.ignore();
                 fmt::print("{}", "\n");
                 std::cout << "Invalid input.\n\n";
-                print_commands = 0;
+                print_command_line = 0;
             }
             else
             {
-                if (print_mode == "bfs")
-                {
-                    fmt::print("{}", "\n");
-                    fmt::print("{}", "Printing tree in breadth first search traversal mode:\n");
-                    fmt::print("{}", "\n");
-                    print_bfs(root);
-                    fmt::print("{}", "\n\n");
-                }
-
                 if (print_mode == "pre")
                 {
                     fmt::print("{}", "\n");
                     fmt::print("{}", "Printing tree in preorder traversal mode:\n");
                     fmt::print("{}", "\n");
-                    print_preorder(root);
+                    if (!root)
+                    {
+                        fmt::print("{}", "Tree is empty.");
+                    }
+                    else
+                    {
+                        print_preorder(root);
+                    }
                     fmt::print("{}", "\n\n");
                 }
 
@@ -340,7 +337,14 @@ void command_loop(node*& root)
                     fmt::print("{}", "\n");
                     fmt::print("{}", "Printing tree in inorder traversal mode:\n");
                     fmt::print("{}", "\n");
-                    print_inorder(root);
+                    if (!root)
+                    {
+                        fmt::print("{}", "Tree is empty.");
+                    }
+                    else
+                    {
+                        print_inorder(root);
+                    }
                     fmt::print("{}", "\n\n");
                 }
 
@@ -349,34 +353,38 @@ void command_loop(node*& root)
                     fmt::print("{}", "\n");
                     fmt::print("{}", "Printing tree in postorder traversal mode:\n");
                     fmt::print("{}", "\n");
-                    print_postorder(root);
-                    fmt::print("{}", "\n\n");
-                }
-
-                else if (print_mode == "dfs")
-                {
-                    fmt::print("{}", "\n");
-                    fmt::print("{}", "Printing tree in depth first search traversal mode:\n");
-                    fmt::print("{}", "\n");
-                    print_dfs(root);
-                    fmt::print("{}", "\n\n");
-                }
-
-                else if (print_mode == "l" || print_mode == "leafes")
-                {
-                    fmt::print("{}", "\n");
-                    fmt::print("{}", "Printing tree in leafes depth only mode:\n");
-                    fmt::print("{}", "\n");
-                    print_leafes(root);
+                    if (!root)
+                    {
+                        fmt::print("{}", "Tree is empty.");
+                    }
+                    else
+                    {
+                        print_postorder(root);
+                    }
                     fmt::print("{}", "\n\n");
                 }
             }
+        }
+
+        else if (input == "l" || input == "leafes")
+        {
+            fmt::print("{}", "\n");
+            fmt::print("{}", "Printing leafes and single parents missing children depth:\n");
+            fmt::print("{}", "\n");
+            print_leafes_depth(root);
+            fmt::print("{}", "\n\n");
         }
 
         else if (input == "g" || input == "graph")
         {
             // TODO
             fmt::print("{}", "Stub. Come back later.\n\n");
+        }
+
+        else if (input == "c" || input == "com")
+        {
+            fmt::print("{}", "\n");
+            print_command_list();
         }
 
         else if (input == "q" || input == "quit")
