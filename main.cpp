@@ -9,12 +9,29 @@
 #include <utility>
 #include <vector>
 
+const static std::string version = "v1.3c";
+
 struct node
 {
     std::uint16_t value = 0;
     node* left = nullptr;
     node* right = nullptr;
 };
+
+void print_logo()
+{
+    fmt::print("{}", "OOO  OOOO    OOOO  OOOOO  OOOO  \n");
+    fmt::print("{}", " O   O   O  O        O    O   O \n");
+    fmt::print("{}", " O   OOOO    OOOO    O    OOOO  \n");
+    fmt::print("{}", " O   O   O       O   O    O   O \n");
+    fmt::print("{}", "OOO  OOOO    OOOO    O    OOOO  \n");
+    fmt::print("{}", "\n");
+}
+
+void print_welcome_message()
+{
+    fmt::print("{}{}{}", "Welcome to Interactive Binary Search Tree Builder ", version, ".\n\n");
+}
 
 void insert_helper(node*& root, std::uint16_t value)
 {
@@ -23,25 +40,24 @@ void insert_helper(node*& root, std::uint16_t value)
         node* new_node = new node;
         new_node->value = value;
         root = new_node;
-
-        fmt::print("{}{}{}", "insert value ", value, ".\n");
+        fmt::print("{}{}{}", ".\nInsert value ", value, ".\n");
         return;
     }
     else if (root->value > value)
     {
-        fmt::print("{}", "traverse left,\n");
+        fmt::print("{}", ", l");
         insert_helper(root->left, value);
     }
     else
     {
-        fmt::print("{}", "traverse right,\n");
+        fmt::print("{}", ", r");
         insert_helper(root->right, value);
     }
 }
 
 void insert(node*& root, std::uint16_t value)
 {
-    fmt::print("{}", "Start at root,\n");
+    fmt::print("{}", "Traverse: root");
     insert_helper(root, value);
     fmt::print("{}", "\n");
 }
@@ -51,6 +67,7 @@ void random(node*& root, std::uint16_t count)
     std::mt19937 gen32 = std::mt19937(time(nullptr));
     for (size_t i = 0; i < count; ++i)
     {
+        fmt::print("{}{}{}{}{}", "Insert node ", i + 1, " / ", count,  ":\n");
         insert(root, gen32() % 100);
     }
 }
@@ -199,7 +216,7 @@ void print_command_list()
     fmt::print("{}", "\t[b | bal]\t\t Tree balanced?\n");
     fmt::print("{}", "\t[f | perf]\t\t Tree perfect?\n");
     fmt::print("{}", "\t[h | height]\t\t Tree height.\n");
-    fmt::print("{}", "\t[l | leafes]\t\t Print leafes and single parents missing children depth.\n");
+    fmt::print("{}", "\t[l | leafes]\t\t Print depth of leafes and nodes that have single child.\n");
     fmt::print("{}", "\t[g | graph]\t\t Print graphicly visualized tree.\n");
 
     fmt::print("{}", "\t[p | print] < >\t\t Print tree in ...\n");
@@ -207,14 +224,13 @@ void print_command_list()
     fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.\n");
     fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode.\n");
 
-    fmt::print("{}", "\t[c | com]\t\t Print command list.\n");
+    fmt::print("{}", "\t[c | commands]\t\t Print command list.\n");
     fmt::print("{}", "\t[q | quit]\t\t Quit program.\n\n");
 }
 
 void command_loop(node*& root)
 {
-    fmt::print("{}", "Welcome to interactive binary search tree builder v1.3c.\n\n");
-    fmt::print("{}", "Enter 'c' or 'com' for a list of all commands.\n\n");
+    fmt::print("{}", "Enter 'c' or 'commands' for a list of all commands.\n\n");
     bool running = true;
     bool print_command_line = 0;
     fmt::print("{}", "Command> ");
@@ -368,8 +384,7 @@ void command_loop(node*& root)
 
         else if (input == "l" || input == "leafes")
         {
-            fmt::print("{}", "\n");
-            fmt::print("{}", "Printing leafes and single parents missing children depth:\n");
+            fmt::print("{}", "Printing depth of leafes and nodes that have single child:\n");
             fmt::print("{}", "\n");
             print_leafes_depth(root);
             fmt::print("{}", "\n\n");
@@ -381,7 +396,7 @@ void command_loop(node*& root)
             fmt::print("{}", "Stub. Come back later.\n\n");
         }
 
-        else if (input == "c" || input == "com")
+        else if (input == "c" || input == "commands")
         {
             fmt::print("{}", "\n");
             print_command_list();
@@ -404,5 +419,7 @@ void command_loop(node*& root)
 int main()
 {
     node* root = nullptr;
+    print_welcome_message();
+    print_logo();
     command_loop(root);
 }
