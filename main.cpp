@@ -146,16 +146,135 @@ bool delete_highest_value_node(node*& root)
 }
 
 // [t] [<traverse>]
-void traverse_and_delete_last_node(node*& root, std::string traversal_path)
+void traverse_and_delete_last_node_helper(node*& parent_node, node*& current_node)
 {
     // TODO
-    fmt::print("{}", "Stub. Come back later.\n");
+    fmt::print("{}", "\nStub. Come back later. Can not delete node with two children.\n");
+}
+
+void traverse_and_delete_last_node(node*& root, std::string traversal_path)
+{
+     if (!root)
+    {
+        fmt::print("{}", "Tree is empty. Nothing to delete.\n");
+        return;
+    }
+
+    node* parent_node = nullptr;
+    node* current_node = root;
+    char previous_direction = ' ';
+    fmt::print("{}", "Traverse: root");
+    for (char left_or_right_direction : traversal_path)
+    {
+        if (left_or_right_direction == 'l')
+        {
+            if (current_node->left)
+            {
+                parent_node = current_node;
+                current_node = current_node->left;
+                fmt::print("{}", ", l");
+                previous_direction = 'l';
+            }
+            else
+            {
+                std::cout << ", <l>.\nInvalid path. Can not traverse left from here.\n";
+                return;
+            }
+        }
+        else if (left_or_right_direction == 'r')
+        {
+            if (current_node->right)
+            {
+                parent_node = current_node;
+                current_node = current_node->right;
+                fmt::print("{}", ", r");
+                previous_direction = 'r';
+            }
+            else
+            {
+                std::cout << ", <r>.\nInvalid path. Can not traverse right from here.\n";
+                return;
+            }
+        }
+        else
+        {
+            std::cout << "\nInvalid path. Can only use 'l' or 'r' for traversal.\n";
+            return;
+        }
+    }
+
+    // Case 1: Node to delete has no children.
+    if (!current_node->left && !current_node->right)
+    {
+        if (previous_direction == 'l')
+        {
+            parent_node->left = nullptr;
+        }
+        // previous_direction == 'r'
+        else
+        {
+            parent_node->right = nullptr;
+        }
+        fmt::print("{}{}{}", "\nDeleting ", current_node->value, ".\n");
+        delete(current_node);
+    }
+
+    // Case 2: Node to delete has only one child.
+    else if (current_node->left && !current_node->right ||
+            !current_node->left &&  current_node->right)
+    {
+        if (previous_direction == 'l')
+        {
+            if (current_node->left)
+            {
+                parent_node->left = current_node->left;
+                current_node->left = nullptr;
+            }
+
+            // current_node->right
+            else {
+                parent_node->left = current_node->right;
+                current_node->right = nullptr;
+            }
+        }
+
+        // previous_direction == 'r'
+        else
+        {
+            if (current_node->left)
+            {
+                parent_node->right = current_node->left;
+                current_node->left = nullptr;
+            }
+
+            // current_node->right
+            else {
+                parent_node->right = current_node->right;
+                current_node->right = nullptr;
+            }
+        }
+        fmt::print("{}{}{}", "\nDeleting ", current_node->value, ".\n");
+        delete(current_node);
+    }
+
+    // Case 3: Node to delete has two children.
+    else
+    {
+        traverse_and_delete_last_node_helper(parent_node, current_node);
+    }
 }
 
 // [purge]
 void purge(node*& root)
 {
-    while (delete_highest_value_node(root));
+    fmt::print("{}", "\n");
+    bool purging = true;
+    while (purging)
+    {
+        fmt::print("{}", "\n");
+        purging = delete_highest_value_node(root);
+    }
+    fmt::print("{}", "\n");
 }
 
 /////
@@ -615,7 +734,7 @@ void command_loop(node*& root)
             else
             {
                 fmt::print("{}", "\n");
-                fmt::print("{}{}{}", "Traversing ", traversal_path, " to the node to delete.\n");
+                fmt::print("{}{}{}", "Traversing path <", traversal_path, ">:\n");
                 fmt::print("{}", "\n");
                 traverse_and_delete_last_node(root, traversal_path);
             }
@@ -625,8 +744,8 @@ void command_loop(node*& root)
         // [purge]
         else if (input == "purge")
         {
+            fmt::print("{}", "Purging tree:");
             purge(root);
-            fmt::print("{}", "\n");
         }
 
         // [p | properties]
