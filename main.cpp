@@ -146,12 +146,6 @@ bool delete_highest_value_node(node*& root)
 }
 
 // [t] [<traverse>]
-void traverse_and_delete_last_node_helper(node*& parent_node, node*& current_node)
-{
-    // TODO
-    fmt::print("{}", "\nStub. Come back later. Can not delete node with two children.\n");
-}
-
 void traverse_and_delete_last_node(node*& root, std::string traversal_path)
 {
      if (!root)
@@ -215,8 +209,6 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
         {
             parent_node->right = nullptr;
         }
-        fmt::print("{}{}{}", "\nDeleting ", current_node->value, ".\n");
-        delete(current_node);
     }
 
     // Case 2: Node to delete has only one child.
@@ -253,15 +245,89 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
                 current_node->right = nullptr;
             }
         }
-        fmt::print("{}{}{}", "\nDeleting ", current_node->value, ".\n");
-        delete(current_node);
     }
 
     // Case 3: Node to delete has two children.
     else
     {
-        traverse_and_delete_last_node_helper(parent_node, current_node);
+        if (previous_direction == 'l')
+        {
+            if (!current_node->left->left && !current_node->left->right ||
+                 current_node->left->left && !current_node->left->right)
+            {
+                parent_node->left = current_node->left;
+                current_node->left->right = current_node->right;
+                current_node->left = nullptr;
+                current_node->right = nullptr;
+            }
+            else
+            {
+                node* inorder_successor_parent = current_node->left;
+                node* inorder_successor = current_node->left->right;
+                while (inorder_successor->right)
+                {
+                    inorder_successor_parent = inorder_successor;
+                    inorder_successor = inorder_successor->right;
+                }
+                
+                if (inorder_successor->left)
+                {
+                    inorder_successor_parent->right = inorder_successor->left;
+                }
+                else
+                {
+                    inorder_successor_parent->right = nullptr;
+                }
+                inorder_successor->left = current_node->left;
+                inorder_successor->right = current_node->right;
+                current_node->left = nullptr;
+                current_node->right = nullptr;
+
+                parent_node->left = inorder_successor;
+            }
+        }
+
+        // previous_direction == 'r'
+        else
+        {
+            if (!current_node->left->left && !current_node->left->right ||
+                 current_node->left->left && !current_node->left->right)
+            {
+                parent_node->right = current_node->left;
+                current_node->left->right = current_node->right;
+                current_node->left = nullptr;
+                current_node->right = nullptr;
+            }
+            else
+            {
+                node* inorder_successor_parent = current_node->left;
+                node* inorder_successor = current_node->left->right;
+                while (inorder_successor->right)
+                {
+                    inorder_successor_parent = inorder_successor;
+                    inorder_successor = inorder_successor->right;
+                }
+
+                if (inorder_successor->left)
+                {
+                    inorder_successor_parent->right = inorder_successor->left;
+                }
+                else
+                {
+                    inorder_successor_parent->right = nullptr;
+                }
+                inorder_successor->left = current_node->left;
+                inorder_successor->right = current_node->right;
+                current_node->left = nullptr;
+                current_node->right = nullptr;
+
+                parent_node->right = inorder_successor;
+            }
+        }
     }
+
+    fmt::print("{}{}{}", "\nDeleting ", current_node->value, ".\n");
+    delete(current_node);
 }
 
 // [purge]
