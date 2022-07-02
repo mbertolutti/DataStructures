@@ -330,6 +330,15 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
     delete(current_node);
 }
 
+// [dd]
+void delete_root(node*& root)
+{
+    // TODO
+    fmt::print("{}", "\n");
+    fmt::print("{}", "Stub. Come back later.\n");
+    fmt::print("{}", "\n");
+}
+
 // [purge]
 void purge(node*& root)
 {
@@ -381,6 +390,7 @@ std::int16_t height(node*& root)
     return tree_height;
 }
 
+// height of the left and right subtree of any node differ by not more than 1
 // [b | bal]
 void leafes_helper(node*& root, int depth, std::vector<int>& leafes)
 {
@@ -402,8 +412,6 @@ void leafes_helper(node*& root, int depth, std::vector<int>& leafes)
     }
 }
 
-// height of the left and right subtree of any node differ by not more than 1
-// [h | height]
 void balanced(node*& root)
 {
     if (!root)
@@ -426,6 +434,21 @@ void balanced(node*& root)
     fmt::print("{}{}{}", "Tree ", (balanced ? "is " : "is not "), "balanced.\n");
 }
 
+// [f | full]
+void full(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later. No check for full tree.\n");
+}
+
+// [e | complete]
+void complete(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later. No check for complete tree.\n");
+}
+
+// [p | perfect]
 void perfect(node*& root)
 {
     if(!root)
@@ -505,10 +528,11 @@ void perfect(node*& root)
     fmt::print("{}{}{}", "Tree ", (perfect ? "is " : "is not "), "perfect.\n");
 }
 
+// [s | symmetric]
 void symmetric(node*& root)
 {
     // TODO
-    fmt::print("{}", "Stub. Come back later.\n");
+    fmt::print("{}", "Stub. Come back later. No check for symmetric tree.\n");
 }
 
 // [p | properties]
@@ -516,8 +540,41 @@ void properties(node*& root)
 {
     fmt::print("{}{}{}", "Tree height is ", height(root), ".\n");
     balanced(root);
+    full(root);
+    complete(root);
     perfect(root);
     symmetric(root);
+}
+
+/////
+///// Rotate
+
+// [rl]
+void rotate_left(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
+}
+
+// [rr]
+void rotate_right(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
+}
+
+// [trl]
+void traverse_and_rotate_left(node*& root, std::string traversal_path)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
+}
+
+// [trr]
+void traverse_and_rotate_right(node*& root, std::string traversal_path)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
 }
 
 /////
@@ -676,23 +733,34 @@ void print_command_list()
     fmt::print("{}", "COMMANDS\n");
     fmt::print("{}", "\tAdd\n");
     fmt::print("{}", "\t[a | add] [<value>]\t Add <value> into tree.\n");
-    fmt::print("{}", "\t[r | rdm] [<count>]\t Add <count> random values into tree. (mt19937.)\n");
+    fmt::print("{}", "\t[r | rdm] [<count>]\t Add <count> random values into tree, using mt19937.\n");
     fmt::print("{}", "\n");
 
     fmt::print("{}", "\tDelete\n");
-    fmt::print("{}", "\t[d | del]\t\t Delete highest value node. (deterministic breadth first search.)\n");
-    fmt::print("{}", "\t[t] [<traversal_path>]\t Traverse the <traversal_path> and delete last node.\n");
-    fmt::print("{}", "\t\t\t\t Example: Command> 't rlr'. Traverse path <rlr> and delete node at last r.\n");
-    fmt::print("{}", "\n");
+    fmt::print("{}", "\t[d | del]\t\t Delete highest value node, using deterministic breadth first search.\n");
+    fmt::print("{}", "\t[t] [<traversal_path>]\t Traverse the <traversal_path> and delete node.\n");
+    fmt::print("{}", "\t\t\t\t Example: Command> 't rlr'. Traverse path <rlr> and delete node at r. <rl'r'>.\n");
+    fmt::print("{}", "\t[dd]\t\t\t Delete root node.\n");
     fmt::print("{}", "\t[purge]\t\t\t Delete complete tree.\n");
     fmt::print("{}", "\n");
 
     fmt::print("{}", "\tProperties\n");
     fmt::print("{}", "\t[h | height]\t\t Check for tree height.\n");
     fmt::print("{}", "\t[b | bal]\t\t Check for balanced tree.\n");
-    fmt::print("{}", "\t[f | perf]\t\t Check for perfect tree.\n");
+    fmt::print("{}", "\t[f | full]\t\t Check for full tree.\n");
+    fmt::print("{}", "\t[e | complete]\t\t Check for complete tree.\n");
+    fmt::print("{}", "\t[p | perf]\t\t Check for perfect tree.\n");
     fmt::print("{}", "\t[s | symmetric]\t\t Check for symmetric tree.\n");
-    fmt::print("{}", "\t[p | properties]\t Print Tree properties: h, b, f, s.\n");
+    fmt::print("{}", "\t[o | properties]\t Print all tree properties: h, b, f, e, p, s.\n");
+    fmt::print("{}", "\n");
+
+    fmt::print("{}", "\tRotation\n");
+    fmt::print("{}", "\t[rl]\t\t\t Rotate left at root.\n");
+    fmt::print("{}", "\t[rr]\t\t\t Rotate right at root.\n");
+    fmt::print("{}", "\t[trl] [<traversal_path>] Traverse the <traversal_path> and rotate left.\n");
+    fmt::print("{}", "\t\t\t\t Example: Command> 'trl rlr'. Traverse path <rlr> and rotate left at r, <rl'r'>.\n");
+    fmt::print("{}", "\t[trr] [<traversal_path>] Traverse the <traversal_path> and rotate right.\n");
+    fmt::print("{}", "\t\t\t\t Example: Command> 'trr rlr'. Traverse path <rlr> and rotate right at r, <rl'r'>.\n");
     fmt::print("{}", "\n");
 
     fmt::print("{}", "\tPrint\n");
@@ -729,6 +797,9 @@ void command_loop(node*& root)
 
         std::string input;
         std::cin >> input;
+
+        /////
+        ///// Add
 
         // [a | add]
         if (input == "a" || input == "add")
@@ -776,6 +847,9 @@ void command_loop(node*& root)
             }
         }
 
+        /////
+        ///// Delete
+
         // [d | del]
         else if (input == "d" || input == "del")
         {
@@ -807,6 +881,13 @@ void command_loop(node*& root)
             fmt::print("{}", "\n");
         }
 
+        // [dd]
+        else if (input == "dd")
+        {
+            fmt::print("{}", "Deleting root:");
+            delete_root(root);
+        }
+
         // [purge]
         else if (input == "purge")
         {
@@ -814,12 +895,8 @@ void command_loop(node*& root)
             purge(root);
         }
 
-        // [p | properties]
-        else if (input == "p" || input == "properties")
-        {
-            properties(root);
-            fmt::print("{}", "\n");
-        }
+        /////
+        ///// Properties
 
         // [h | height]
         else if (input == "h" || input == "height")
@@ -835,8 +912,22 @@ void command_loop(node*& root)
             fmt::print("{}", "\n");
         }
 
-        // [f | perf]
-        else if (input == "f" || input == "perf")
+        // [c | complete]
+        else if (input == "e" || input == "complete")
+        {
+            perfect(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [f | full]
+        else if (input == "f" || input == "full")
+        {
+            perfect(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [p | perf]
+        else if (input == "p" || input == "perfect")
         {
             perfect(root);
             fmt::print("{}", "\n");
@@ -848,6 +939,81 @@ void command_loop(node*& root)
             symmetric(root);
             fmt::print("{}", "\n");
         }
+
+        // [o | properties]
+        else if (input == "o" || input == "properties")
+        {
+            properties(root);
+            fmt::print("{}", "\n");
+        }
+
+        /////
+        ///// Rotate
+
+        // [rl]
+        else if (input == "rl")
+        {
+            rotate_left(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [rr]
+        else if (input == "rr")
+        {
+            rotate_right(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [trl]
+        else if (input == "trl")
+        {
+            std::string traversal_path;
+            fmt::print("{}", "Enter traversal path to the node to rotate left > ");
+            std::cin >> traversal_path;
+            if(std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore();
+                fmt::print("{}", "\n");
+                std::cout << "Invalid input.\n\n";
+                print_command_line = 0;
+            }
+            else
+            {
+                fmt::print("{}", "\n");
+                fmt::print("{}{}{}", "Traversing path <", traversal_path, ">:\n");
+                fmt::print("{}", "\n");
+                traverse_and_rotate_left(root, traversal_path);
+            }
+            fmt::print("{}", "\n");
+        }
+
+        // [trr]
+        else if (input == "trr")
+        {
+            std::string traversal_path;
+            fmt::print("{}", "Enter traversal path to the node to rotate right > ");
+            std::cin >> traversal_path;
+            if(std::cin.fail())
+            {
+                std::cin.clear();
+                std::cin.ignore();
+                fmt::print("{}", "\n");
+                std::cout << "Invalid input.\n\n";
+                print_command_line = 0;
+            }
+            else
+            {
+                fmt::print("{}", "\n");
+                fmt::print("{}{}{}", "Traversing path <", traversal_path, ">:\n");
+                fmt::print("{}", "\n");
+                traverse_and_rotate_right(root, traversal_path);
+            }
+            fmt::print("{}", "\n");
+        }
+
+        /////
+        ///// Print
 
         // [g | graph]
         else if (input == "g" || input == "graph")
