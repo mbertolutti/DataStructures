@@ -224,7 +224,8 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
             }
 
             // current_node->right
-            else {
+            else
+            {
                 parent_node->left = current_node->right;
                 current_node->right = nullptr;
             }
@@ -240,7 +241,8 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
             }
 
             // current_node->right
-            else {
+            else
+            {
                 parent_node->right = current_node->right;
                 current_node->right = nullptr;
             }
@@ -333,10 +335,80 @@ void traverse_and_delete_last_node(node*& root, std::string traversal_path)
 // [dd]
 void delete_root(node*& root)
 {
-    // TODO
-    fmt::print("{}", "\n");
-    fmt::print("{}", "Stub. Come back later.\n");
-    fmt::print("{}", "\n");
+    if (!root)
+    {
+        fmt::print("{}", "Tree is empty. Nothing to delete.\n");
+        fmt::print("{}", "\n");
+        return;
+    }
+    
+    // Case 1: Root node has no children.
+    if (!root->left && !root->right)
+    {
+        delete(root);
+        root = nullptr;
+    }
+
+    // Case 2: Root node has only one child at left direction.
+    else if (root->left && !root->right)
+    {
+        node* node_to_delete = root;
+        root = root->left;
+        node_to_delete->left = nullptr;
+        delete(node_to_delete);
+    }
+
+    // Case 3: Root node has only one child at right direction.
+    else if (!root->left &&  root->right)
+    {
+        node* node_to_delete = root;
+        root = root->right;
+        node_to_delete->right = nullptr;
+        delete(node_to_delete);
+    }
+
+    // Case 4: Root node has two children.
+    else
+    {
+        if (!root->left->left && !root->left->right ||
+             root->left->left && !root->left->right)
+        {
+            node* node_to_delete = root;
+            root = root->left;
+            root->right = node_to_delete->right;
+            node_to_delete->left = nullptr;
+            node_to_delete->right = nullptr;
+            delete(node_to_delete);
+        }
+        else
+        {
+            node* inorder_successor_current = root->left;
+            node* inorder_successor_next = root->left->right;
+            while (inorder_successor_next->right)
+            {
+                inorder_successor_current = inorder_successor_next;
+                inorder_successor_next = inorder_successor_next->right;
+            }
+            
+            if (inorder_successor_next->left)
+            {
+                inorder_successor_current->right = inorder_successor_next->left;
+            }
+            else
+            {
+                inorder_successor_current->right = nullptr;
+            }
+
+            node* node_to_delete = root;
+            inorder_successor_next->left = root->left;
+            inorder_successor_next->right = root->right;
+            root = inorder_successor_next;
+
+            node_to_delete->left = nullptr;
+            node_to_delete->right = nullptr;
+            delete(node_to_delete);
+        }
+    }
 }
 
 // [purge]
@@ -726,6 +798,50 @@ void print_postorder(node*& root)
 }
 
 /////
+///// Save / Load
+
+// [save]
+void save_current_tree(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
+}
+
+// [load]
+void load_saved_tree(node*& root)
+{
+    // TODO
+    fmt::print("{}", "Stub. Come back later.\n");
+}
+
+// [ex]
+void load_default_example_tree(node*& root)
+{
+    if (root)
+    {
+        fmt::print("{}", "Tree is not empty.\n");
+        fmt::print("{}", "Purging tree:");
+        purge(root);
+    }
+    fmt::print("{}", "Loading default example tree:\n");
+    insert(root, 15);
+    insert(root, 7);
+    insert(root, 19);
+    insert(root, 3);
+    insert(root, 11);
+    insert(root, 17);
+    insert(root, 23);
+    insert(root, 1);
+    insert(root, 4);
+    insert(root, 9);
+    insert(root, 13);
+    insert(root, 16);
+    insert(root, 18);
+    insert(root, 21);
+    insert(root, 27);
+}
+
+/////
 ///// Help
 
 void print_command_list()
@@ -746,10 +862,10 @@ void print_command_list()
 
     fmt::print("{}", "\tProperties\n");
     fmt::print("{}", "\t[h | height]\t\t Check for tree height.\n");
-    fmt::print("{}", "\t[b | bal]\t\t Check for balanced tree.\n");
+    fmt::print("{}", "\t[b | balanced]\t\t Check for balanced tree.\n");
     fmt::print("{}", "\t[f | full]\t\t Check for full tree.\n");
     fmt::print("{}", "\t[e | complete]\t\t Check for complete tree.\n");
-    fmt::print("{}", "\t[p | perf]\t\t Check for perfect tree.\n");
+    fmt::print("{}", "\t[p | perfect]\t\t Check for perfect tree.\n");
     fmt::print("{}", "\t[s | symmetric]\t\t Check for symmetric tree.\n");
     fmt::print("{}", "\t[o | properties]\t Print all tree properties: h, b, f, e, p, s.\n");
     fmt::print("{}", "\n");
@@ -770,6 +886,12 @@ void print_command_list()
     fmt::print("{}", "\t\t  [pre]\t\t ... preorder traversal mode.\n");
     fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.\n");
     fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode.\n");
+    fmt::print("{}", "\n");
+
+    fmt::print("{}", "\tSave / Load\n");
+    fmt::print("{}", "\t[save]\t\t\t Save current tree.\n");
+    fmt::print("{}", "\t[load]\t\t\t Load saved tree.\n");
+    fmt::print("{}", "\t[ex]\t\t\t Load default example tree.\n");
     fmt::print("{}", "\n");
 
     fmt::print("{}", "\tHelp\n");
@@ -884,7 +1006,8 @@ void command_loop(node*& root)
         // [dd]
         else if (input == "dd")
         {
-            fmt::print("{}", "Deleting root:");
+            fmt::print("{}", "Deleting root.\n");
+            fmt::print("{}", "\n");
             delete_root(root);
         }
 
@@ -1099,6 +1222,32 @@ void command_loop(node*& root)
                 }
             }
         }
+
+        /////
+        ///// Save / Load
+
+        // [save]
+        else if (input == "save")
+        {
+            save_current_tree(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [load]
+        else if (input == "load")
+        {
+            load_saved_tree(root);
+            fmt::print("{}", "\n");
+        }
+
+        // [ex]
+        else if (input == "ex")
+        {
+            load_default_example_tree(root);
+        }
+
+        /////
+        ///// Help
 
         // [c | commands]
         else if (input == "c" || input == "commands")
