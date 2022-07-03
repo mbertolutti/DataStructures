@@ -883,9 +883,9 @@ void print_command_list()
     fmt::print("{}", "\t[g | graph]\t\t Print graphically visualized tree.\n");
     fmt::print("{}", "\t[l | leafes]\t\t Print depth of leafes and nodes that have single child.\n");
     fmt::print("{}", "\t[m | mode] < >\t\t Print tree in ...\n");
-    fmt::print("{}", "\t\t  [pre]\t\t ... preorder traversal mode.\n");
-    fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.\n");
-    fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode.\n");
+    fmt::print("{}", "\t\t  [pre]\t\t ... preorder traversal mode.  Print node on first visit.  Root, left, right.\n");
+    fmt::print("{}", "\t\t  [in]\t\t ... inorder traversal mode.   Print node on second visit. Left, root, right.\n");
+    fmt::print("{}", "\t\t  [post]\t ... postorder traversal mode. Print node on third visit.  Left, right, root.\n");
     fmt::print("{}", "\n");
 
     fmt::print("{}", "\tSave / Load\n");
