@@ -823,21 +823,11 @@ void load_default_example_tree(node*& root)
         purge(root);
     }
     fmt::print("{}", "Loading default example tree:\n");
-    insert(root, 15);
-    insert(root, 7);
-    insert(root, 19);
-    insert(root, 3);
-    insert(root, 11);
-    insert(root, 17);
-    insert(root, 23);
-    insert(root, 2);
-    insert(root, 4);
-    insert(root, 9);
-    insert(root, 13);
-    insert(root, 16);
-    insert(root, 18);
-    insert(root, 21);
-    insert(root, 27);
+    std::vector<int16_t> insert_me_vector = {15, 7, 19, 3, 11, 17, 23, 2, 4, 9, 13, 16, 18, 21, 28};
+    for (uint16_t value : insert_me_vector)
+    {
+        insert(root, value);
+    }
 }
 
 /////
