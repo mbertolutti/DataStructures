@@ -739,7 +739,6 @@ void print_graph(node*& root)
         current_node_count *= 2;
         stub_count = 0;
     }
-
 }
 
 // Print depth of leafes and nodes that have single child.
@@ -831,7 +830,7 @@ void load_default_example_tree(node*& root)
     insert(root, 11);
     insert(root, 17);
     insert(root, 23);
-    insert(root, 1);
+    insert(root, 2);
     insert(root, 4);
     insert(root, 9);
     insert(root, 13);
